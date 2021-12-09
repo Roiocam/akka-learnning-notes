@@ -31,19 +31,103 @@ Akka 在 2.6 之后对 API 做了很多改动，主要是增加的 Typed Actor �
 
 ### [ActorSystemTest](src/test/java/com/iquantex/phoenix/typedactor/guide/system/ActorSystemTest.java)
 
-# 四. Actor 消息的接受和回复
+# 四. Actor 消息的接收和回复
 
 在下面的测试用例中，提供了 Actor 接收并处理消息的测试例子，并且演示了能够改变 Actor 处理消息行为的功能。(DavidBehavior中定义的能力)
 
 ### [DavidBehaviorTest](src/test/java/com/iquantex/phoenix/typedactor/guide/actor/DavidBehaviorTest.java)
 
+### 1. 接收和处理
+```java
+// 接收和处理是Behavior的基本能力
+@Override
+public Receive<Message> createReceive() {
+    return newReceiveBuilder()
+        .onMessage(HelloResponse.class, this::onHelloResponse) // 引用方法
+        .onMessage(AskChild.class,msg -> {
+            // 处理逻辑
+            return Behaviors.same();
+        })
+        .build();
+}
+```
+
+### 2. 回复消息
+```java
+// 消息的回复依赖于ActorRef，因此当需要回复发送者消息时，需要在消息中定义回复者的ActorRef（通常由发送消息的人提供）
+// 不同于 Classic Actor，Actor中不再保存最后一个消息发送者的引用。即 getSender()
+public Behavior<Message> onHelloResponse(HelloResponse helloResponse) {
+    helloResponse.getReplyTo().tell(new Message(getContext().getSelf()));
+    return Behaviors.same();
+}
+```
+
+
 # 五. Actor 实现的请求/响应通信模式
 
 在 TypedActor 中提供了 ask() 方法，用于向 Actor 发送消息并等待返回结果. 在下面的测试用例中，演示了两种请求场景，以及数据库i/o的场景
 
-- 在启动时请求其他Actor，并等待结果初始化自身
-- 在接受命令时请求其他Actor
-- 在接受名了后异步请求数据库I/O，并将结果封装后发给自身
+### 1. 在启动时请求其他Actor，并等待结果初始化自身
+
+这里需要借助初始化Actor时的 `ActorContext<T>`
+
+```java
+actorContext.ask(
+        Message.class,
+        actorRef,
+        Duration.ofMillis(100),
+        relyTo -> new Message(relyTo), // Message 工厂方法, 这里 relyTo 是匿名 Actor
+        (res, throwable) -> {     // 回调方法，在这里可以处理异常以及转换消息格式
+            Response response = (Response) res;
+            actorContext.getLog()
+                    .info(
+                            "GetResponse From {}, Response={}",
+                            response.getReplyTo().path(),
+                            response.getResponse());
+            // 处理后,传给自身
+            return response;
+        });
+```
+
+### 2. 在接受命令时请求其他Actor
+
+```java
+// 这里需要 getContext()拿到上下文引用
+getContext().ask(
+    Message.class,
+    actorRef,
+    Duration.ofMillis(100),
+    relyTo -> new Message(getContext().getSelf()),
+    (response, throwable) -> {
+        if (throwable instanceof TimeoutException) {
+            getContext().getLog().info("因为上面 sayHello 没有传匿名 Actor,所以这里拿不到任何回复");
+        }
+        return response;
+    }
+);
+```
+
+
+### 3. 在接受名了后异步请求数据库I/O，并将结果封装后发给自身
+```java
+// 还有一种方案是通过 ask 客户端,即 AskPattern
+CompletionStage<Message> ask = AskPattern.ask(
+        actorRef,
+        replyTo -> new Message(replyTo),
+        Duration.ofMillis(100),
+        getContext().getSystem().scheduler());
+// 这里将异步结果转换为 Future
+CompletableFuture<Message> future = ask.toCompletableFuture();
+// 通过 pipeToSelf,在转换消息格式后发送给自身,这个API能够用于异步请求数据库
+getContext()
+    .pipeToSelf(
+        future,
+        (ok, exc) -> {
+            // 不管是否有异常 直接返回
+            return (Response) ok;
+        });
+```
+
 
 ### [ActorAskTest](/src/test/java/com/iquantex/phoenix/typedactor/guide/actor/ActorAskTest.java)
 
@@ -58,6 +142,35 @@ Akka 在 2.6 之后对 API 做了很多改动，主要是增加的 Typed Actor �
 下面的测试用例演示了这一过程. 除此之外，每个Actor内部能够获取到自身的孩子，在下面的测试用例中也体现了这一点。
 
 ### [GetActorRefTest](/src/test/java/com/iquantex/phoenix/typedactor/guide/actor/GetActorRefTest.java)
+
+### 1. 注册自身到Receptionist
+
+```java
+getContext().getSystem()
+        .receptionist()
+        .tell(Receptionist.register(ServiceKeys.DAVID_KEY, getContext().getSelf()));
+```
+
+### 2. 向receptionist发起ask请求查找ActorRef
+
+```java
+// 通过ActorSystem拿receptionist
+ActorRef<Command> receptionist = actorSystem.receptionist();
+// 向receptionist发送ask查找，查找指定ServiceKey的Actor是否注册
+CompletionStage<Listing> result =
+        AskPattern.ask(
+                receptionist,
+                replyTo -> Receptionist.find(ServiceKeys.DAVID_KEY, replyTo),
+                Duration.ofMillis(100),
+                actorSystem.scheduler());
+```
+
+### 3. 查找自己的孩子Actor
+
+```java
+List<ActorRef<Void>> children = getContext().getChildren();
+```
+
 
 # 七. 持久化 Actor
 
