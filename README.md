@@ -185,9 +185,9 @@ Akka 原生支持事件的持久化，并支持多种持久化插件。持久化
 总结来说就是：EventSouredActor（也称为持久Actor）接收（非持久）命令 `Command`，如果它可以应用于当前状态 `State` (命令可以指定State来接收)，则首先验证该命令。例如，这里的验证可以意味着任何事情，从简单检查命令消息的字段到与多个外部服务的对话。如果验证成功，则从命令生成事件 `Event`，表示命令的效果 `Effect`。
 然后这些事件被持久化 `Effect().persist(event)`，并在成功持久化后用于改变Actor的状态`State`。当需要恢复 EventSouredActor 的状态时，只重放 `replaying` 我们知道它们可以成功应用的持久事件。换句话说，与命令相反，事件在重播`replaying`给持久参与者时不会失败。
 
-###[持久化Actor定义例子(BookBehavior.java)](/src/main/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehavior.java)
+### [持久化Actor定义例子(BookBehavior.java)](/src/main/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehavior.java)
 
-###[持久化Actor测试案例(BookBehaviorTest.java)](/src/test/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehaviorTest.java)
+### [持久化Actor测试案例(BookBehaviorTest.java)](/src/test/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehaviorTest.java)
 
 ### 1. 如何定义持久化Actor
 
