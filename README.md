@@ -2,6 +2,7 @@
 
 在 Akka 中事件/消息代替了对象之间的方法调用。因此我们首要目标是定义一个消息接口，以及相应的消息序列化.
 
+
 ### [Message.java](src/main/java/com/iquantex/phoenix/typedactor/guide/protocol/Message.java)
 
 # 二. Classic Actor 和 Typed Actor
