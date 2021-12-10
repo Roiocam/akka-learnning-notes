@@ -186,6 +186,7 @@ Akka 原生支持事件的持久化，并支持多种持久化插件。持久化
 然后这些事件被持久化 `Effect().persist(event)`，并在成功持久化后用于改变Actor的状态`State`。当需要恢复 EventSouredActor 的状态时，只重放 `replaying` 我们知道它们可以成功应用的持久事件。换句话说，与命令相反，事件在重播`replaying`给持久参与者时不会失败。
 
 ###[持久化Actor定义例子(BookBehavior.java)](/src/main/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehavior.java)
+
 ###[持久化Actor测试案例(BookBehaviorTest.java)](/src/test/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehaviorTest.java)
 
 ### 1. 如何定义持久化Actor
