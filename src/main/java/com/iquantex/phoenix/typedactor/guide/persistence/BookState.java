@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 用于持久化.
+ * State 用于表示 Actor 的状态，这样做的原因之一是Behavior作为行为，只是函数集合，因此使用单独的类来表示Actor的状态。
+ *
+ * <p>Akka文档中阐述State通常是不可变,EventHandler每次产生新的State
+ *
+ * <p>State会用于快照保存
  *
  * @author AndyChen
  */

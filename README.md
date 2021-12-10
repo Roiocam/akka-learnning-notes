@@ -174,4 +174,87 @@ List<ActorRef<Void>> children = getContext().getChildren();
 
 # 七. 持久化 Actor
 
+Akka 原生支持事件的持久化，并支持多种持久化插件。持久化的Actor 是有状态的Actor，其状态会被持久化，不只是用完即弃，所以与普通的Actor略微不同。
+
+持久化 Actor 需要继承抽象类 `EventSourcedBehavior<Command,Event,State>` 该类有三个泛型类型
+
+- Command：Actor 能够接收的消息，称为命令
+- Event：命令产生的效果，称为事件，事件会被持久化，事件用于改变 Actor 状态，一个命令可以产生一系列事件，在持久化时会保证原子写入这些事件
+- State：Actor 的状态，Akka的快照功能会持久化状态，用于在事件回溯时加快速度
+
+总结来说就是：EventSouredActor（也称为持久Actor）接收（非持久）命令 `Command`，如果它可以应用于当前状态 `State` (命令可以指定State来接收)，则首先验证该命令。例如，这里的验证可以意味着任何事情，从简单检查命令消息的字段到与多个外部服务的对话。如果验证成功，则从命令生成事件 `Event`，表示命令的效果 `Effect`。
+然后这些事件被持久化 `Effect().persist(event)`，并在成功持久化后用于改变Actor的状态`State`。当需要恢复 EventSouredActor 的状态时，只重放 `replaying` 我们知道它们可以成功应用的持久事件。换句话说，与命令相反，事件在重播`replaying`给持久参与者时不会失败。
+
+###[持久化Actor定义例子(BookBehavior.java)](/src/main/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehavior.java)
+###[持久化Actor测试案例(BookBehaviorTest.java)](/src/test/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehaviorTest.java)
+
+### 1. 如何定义持久化Actor
+
+```java
+public class PersistenceActor extends EventSourcedBehavior<SomeCommand,SomeEvent,SomeState> {
+
+    public PersistenceActor(PersistenceId persistenceId) {
+        super(persistenceId);
+    }
+
+    @Override
+    public SomeState emptyState() {
+        return new SomeState(); // 空状态
+    }
+
+    @Override
+    public CommandHandler<SomeCommand, SomeEvent, SomeState> commandHandler() {
+        return newCommandHandlerBuilder()
+            .forAnyState() // 对于任何状态
+            .onCommand(AddCommand.class,(someState, someCommand) -> {
+                // 该命令产生效果是持久化事件的效果 => Effect().persist()
+                // 该效果会持久化传入的事件 AddEvent
+                return Effect().persist(new AddEvent());
+            })
+            .build();
+    }
+
+    @Override
+    public EventHandler<SomeState, SomeEvent> eventHandler() {
+        return newEventHandlerBuilder()
+            .forAnyState() // 对于任何状态
+            .onEvent(AddEvent.class,(state,event)->{
+                // 事件改变状态
+                state.updateByEvent(event);
+                // 将状态更新
+                return new SomeState(state);
+            })
+            .build();
+    }
+}
+```
+
+### 2. 如何持久化事件
+```java
+// 只需要在 CommandHandler 中，返回效果 Effect().persist() 并传入需要持久化的事件即可，事件会在 eventHandler 处理之后持久化
+Effect().persist(new AddEvent());
+```
+### 3. 相关配置
+```conf
+akka {
+  persistence {
+    # 内存版本持久化，不会持久化到文件
+    #journal.plugin = "akka.persistence.journal.inmem"
+    #snapshot-store.plugin = "akka.persistence.snapshot-store.local"
+    #snapshot-store.local.dir = "target/snapshot"
+    # JDBC 持久化
+    journal {
+      plugin = "jdbc-journal"
+      auto-start-journals = ["jdbc-journal"]
+    }
+    snapshot-store {
+      plugin = "jdbc-snapshot-store"
+      auto-start-snapshot-stores = ["jdbc-snapshot-store"]
+    }
+  }
+
+}
+```
+
+
 # ...

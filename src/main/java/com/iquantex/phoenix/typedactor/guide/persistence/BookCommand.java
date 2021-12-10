@@ -3,18 +3,34 @@ package com.iquantex.phoenix.typedactor.guide.persistence;
 import com.iquantex.phoenix.typedactor.guide.protocol.Message;
 
 import akka.actor.typed.ActorRef;
+import akka.actor.typed.RecipientRef;
+import akka.actor.typed.Scheduler;
+import akka.japi.function.Function;
+import akka.pattern.StatusReply;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/** {@link BookBehavior} 的命令接口 */
+import java.time.Duration;
+
+/**
+ * Command 是持久化Actor/Behavior 应该接收的消息类型.
+ *
+ * <p>Command 不会被持久化
+ *
+ * <p>{@link BookBehavior} 的命令接口
+ */
 public interface BookCommand extends Message {
 
     @AllArgsConstructor
     @Getter
     class AddBook implements BookCommand {
 
-        /** 这里消息定义为{@link Message}，可以认为所有消息都继承自它，我这么写主要是在外部系统或者不同Actor之间通信时，使用特定的类型会导致耦合 */
-        private ActorRef<Message> actorRef;
+        /**
+         * 这里消息定义为{@link StatusReply}，作为通用的消息类型，如 {@link
+         * akka.actor.typed.javadsl.AskPattern#askWithStatus(RecipientRef, Function, Duration,
+         * Scheduler)} 中就用到此消息类型.
+         */
+        private ActorRef<StatusReply> actorRef;
 
         private String uuid;
         private String title;
@@ -26,7 +42,7 @@ public interface BookCommand extends Message {
     @Getter
     class RemoveBook implements BookCommand {
 
-        private ActorRef<Message> actorRef;
+        private ActorRef<StatusReply> actorRef;
         private String uuid;
     }
 
@@ -34,7 +50,7 @@ public interface BookCommand extends Message {
     @Getter
     class UpdateBook implements BookCommand {
 
-        private ActorRef<Message> actorRef;
+        private ActorRef<StatusReply> actorRef;
         private String uuid;
         private String title;
         private String author;
@@ -45,7 +61,7 @@ public interface BookCommand extends Message {
     @Getter
     class GetBook implements BookCommand {
 
-        private ActorRef<Message> actorRef;
+        private ActorRef<StatusReply> actorRef;
         private String uuid;
     }
 
@@ -53,6 +69,13 @@ public interface BookCommand extends Message {
     @Getter
     class GetAllBook implements BookCommand {
 
-        private ActorRef<Message> actorRef;
+        private ActorRef<StatusReply> actorRef;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    class ClearAll implements BookCommand {
+
+        private ActorRef<StatusReply> actorRef;
     }
 }
