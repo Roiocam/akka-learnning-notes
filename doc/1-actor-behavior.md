@@ -271,4 +271,9 @@ public static Behavior<Message> create() {
 | 继承 `AbstractPersistentActor` <br> 实例化创建 | 继承 `EventSourcedBehavior<Command,Event,State>` <br> 通过 `Behaviors.setup()` 创建 |
 | Stash 和 Timers 类型的 Actor 同上，以继承不同类创建 | Stash 和 Timers 类型的 Actor 同上，以 Behaviors 工厂的不同方法创建 |
 
+# 五. 测试用例
+
+在阅读以下测试用例之前，首先需要阅读 [**ActorSystem**](/doc/2-actor-system.md) 中的简短内容。
+
+**演示 Behavior 如何处理消息的测试用例：**[DavidBehaviorTest](/src/test/java/com/iquantex/phoenix/typedactor/guide/actor/DavidBehaviorTest.java)
 

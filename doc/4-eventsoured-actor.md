@@ -73,8 +73,19 @@ Effect().persist()
 另一个需要遵循的规范是，CommandHandlerWithReply 中，命令执行产生的效果 Effect，现在强制为 `ReplyEffect` 即强制带有回复的效果。ReplyEffect 只能通过 `Effect().persist().thenReply()` 即在持久化/或者不执行持久化之后，
 指定`thenReply()` 的 SideEffect 才能获取。实现了编译层面强制回复。
 
+## 5. API 对比表格
 
-## 5. 代码示例和测试用例
+| | 经典 Actor | Typed |
+| ------ | ------ | ------ |
+| 创建 | 继承 `PersistenceActor`| 继承 `EventSouredBehavior<Command,Event,State>` |
+| 定义命令处理| `receiveCommand` | `commandHandler` |
+| 定义事件处理| `receiveRecover` | `eventHandler` |
+| 持久化顺序| `persist(event){ callback } ` <br> 持久化之后回调 | - `Effect.persist(event)` <br> - `eventHandler` <br> - `Effect.andThen()` 副作用 |
+| Replaying/ 重播/ 事件溯源 | 接收 `RecoveryCompleted.class`  | 接收 `RecoveryCompleted` 信号 |
+| 强制回复的EventSoured | 无  | 继承`EventSourcedBehaviorWithEnforcedReplies<Command,Event,State>` |
+
+
+## 6. 代码示例和测试用例
 
 <details><summary>代码示例</summary>
 
@@ -146,16 +157,6 @@ akka {
 - [持久化Actor定义例子(BookBehavior.java)](/src/main/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehavior.java)
 - [持久化Actor测试案例(BookBehaviorTest.java)](/src/test/java/com/iquantex/phoenix/typedactor/guide/persistence/BookBehaviorTest.java)
 
-## 6. API 对比表格
-
-| | 经典 Actor | Typed |
-| ------ | ------ | ------ |
-| 创建 | 继承 `PersistenceActor`| 继承 `EventSouredBehavior<Command,Event,State>` |
-| 定义命令处理| `receiveCommand` | `commandHandler` |
-| 定义事件处理| `receiveRecover` | `eventHandler` |
-| 持久化顺序| `persist(event){ callback } ` <br> 持久化之后回调 | - `Effect.persist(event)` <br> - `eventHandler` <br> - `Effect.andThen()` 副作用 |
-| Replaying/ 重播/ 事件溯源 | 接收 `RecoveryCompleted.class`  | 接收 `RecoveryCompleted` 信号 |
-| 强制回复的EventSoured | 无  | 继承`EventSourcedBehaviorWithEnforcedReplies<Command,Event,State>` |
 
 # 三. Akka 持久化内部保证及其他功能
 

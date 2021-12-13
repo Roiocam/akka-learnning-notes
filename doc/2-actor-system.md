@@ -31,7 +31,7 @@
     ActorSystem<T>.create(守护Actor的工厂方法,"name")
 ```
 
-# 示例代码
+# 测试用例
 
 
 下面的测试用例中演示了如何创建ActorSystem
