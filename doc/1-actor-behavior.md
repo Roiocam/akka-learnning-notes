@@ -183,11 +183,69 @@ class AddBook implements Message {
 
 ![生命周期信号](/img/typed_life_signal.png)
 
-### 5. 监督机制 Supervisor
+### 5. Supervisor 
+
+**经典 Actor**
+
+在经典 Actor 中，子 Actor 的监督机制通过在 父 Actor 中覆盖 `supervisorStrategy` 实现。
+
+<details>
+<summary>示例代码</summary>
+
+```java
+@Override
+public SupervisorStrategy supervisorStrategy() {
+    // 一对一的监督策略
+    return new OneForOneStrategy(
+            10,
+            Duration.ofMinutes(1),
+            DeciderBuilder.match(ArithmeticException.class, e -> SupervisorStrategy.resume())
+                    .match(NullPointerException.class, e -> SupervisorStrategy.restart())
+                    .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())
+                    .matchAny(o -> SupervisorStrategy.escalate())
+                    .build());
+    }
+```
+
+</details>
+
+**Typed**
+
+在 Typed 中，对子 Actor 的监督则是通过 `Behaviors.supervise()` 实现
+
+<details>
+<summary>示例代码</summary>
+
+```java
+Behaviors.supervise(DavidBehavior.create())
+    .onFailure(IllegalStateException.class, SupervisorStrategy.resume());
+
+// 使用方式1
+Behavior<Message> wrapper = Behaviors.supervise(DavidBehavior.create())
+    .onFailure(IllegalStateException.class, SupervisorStrategy.resume());
+context.spawn(wrapper,"DavidOne");
+
+// 使用方式2
+public static Behavior<Message> create() {
+    return Behaviors
+        .supervise(Behaviors.setup(DavidBehavior::new))
+        .onFailure(IllegalStateException.class, SupervisorStrategy.resume());
+}
+```
+
+</details>
 
 ### 6. watch
 
+`ActorContext.watch` 和 `Terminated` 在 Typed 中几乎与经典 Actor 相同。唯一的区别是在 Typed 中 `Terminated` 属于 Signal 而不是 Message
+
 ### 7. stop
+
+| 停止方式 | 经典 Actor | Typed |
+| ------ | ------ | ------ |
+| 停止子 Actor | `ActorSystem.stop` <br> `ActorContext.stop` | `ActorContext<T>.stop` |
+| 停止自身 | `ActorSystem.stop` <br> `ActorContext.stop` | `Behaviors.stopped()` |
+| 消息停止自身 | `PoisonPill 消息` | 不支持 |
 
 ### 8. 示例代码
 
