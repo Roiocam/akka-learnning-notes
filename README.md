@@ -1,3 +1,16 @@
+# 前言
+
+
+# 目录
+
+### 1. [Actor 和 Behavior](/doc/1-diff.md)
+### 2. [ActorSystem](/doc/2-actor-system.md)
+### 3. [Actor 交互模式 / 发现](/doc/3-actor-interaction.md)
+### 4. [持久化 Actor](/doc/4-eventsoured-actor.md)
+### 5. [集群 Actor](/doc/5-cluster.md)
+
+
+
 # 一. Message
 
 在 Akka 中事件/消息代替了对象之间的方法调用。因此我们首要目标是定义一个消息接口，以及相应的消息序列化.
@@ -15,22 +28,7 @@ Akka 在 2.6 之后对 API 做了很多改动，主要是增加的 Typed Actor �
 
 # 三. ActorSystem
 
-在新版的 Typed Actor 中，ActorSystem 也做了一些改动，其中比较重要的一点时，Akka 不会自动帮用户创建用户 Guardian Actor，因此我们需要手动创建。
 
-```
-                                         Root guardian
-                                             │
-                     ┌───────────────────────┴─────────────────────────┐
-                     │                                                 │
-                     │                                                 │
-                     │                                                 │
-                User guardian                                   System guardian
-    ActorSystem.create(守护Actor的工厂方法,"name")
-```
-
-下面的测试用例中演示了如何创建ActorSystem
-
-### [ActorSystemTest](src/test/java/com/iquantex/phoenix/typedactor/guide/system/ActorSystemTest.java)
 
 # 四. Actor 消息的接收和回复
 
@@ -91,22 +89,6 @@ actorContext.ask(
 ```
 
 ### 2. 在接受命令时请求其他Actor
-
-```java
-// 这里需要 getContext()拿到上下文引用
-getContext().ask(
-    Message.class,
-    actorRef,
-    Duration.ofMillis(100),
-    relyTo -> new Message(getContext().getSelf()),
-    (response, throwable) -> {
-        if (throwable instanceof TimeoutException) {
-            getContext().getLog().info("因为上面 sayHello 没有传匿名 Actor,所以这里拿不到任何回复");
-        }
-        return response;
-    }
-);
-```
 
 
 ### 3. 在接受名了后异步请求数据库I/O，并将结果封装后发给自身
