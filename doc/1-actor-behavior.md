@@ -173,9 +173,7 @@ class AddBook implements Message {
 | AbstractActor/AbstractBehavior | getParent(), 实际是从 ActorContext 中获取 | 无，需要在构造函数中作为参数传入 `ActorRef<T>` |
 | ActorContext | getContext().getParent() | 同上，`ActorContext<T>` 不再维护 sender 成员 |
 
-### 4. 生命周期 和 监督 Supervision
-
-#### 生命周期钩子
+### 4. 生命周期 
 
 | 经典 Actor | Typed |
 | ------ | ------ |
@@ -185,18 +183,34 @@ class AddBook implements Message {
 
 ![生命周期信号](/img/typed_life_signal.png)
 
-#### Supervision
+### 5. 监督机制 Supervisor
 
-### 7. watch
+### 6. watch
 
-### 8. stop
+### 7. stop
 
-### 9. ActorSelection
-
-### 10. 示例代码
+### 8. 示例代码
 
 下面的类是新版 Actor 的示例定义：
 
 [**DavidBehavior.java**](src/main/java/com/iquantex/phoenix/typedactor/guide/actor/DavidBehavior.java)
+
+
+# 四. Actor 类型变更
+
+在经典 Actor 中，可以继承的 Actor 大致有如下类型：
+
+![经典Actor类型](/img/classic_actor_type.png)
+
+在 Typed 中，因为 Behavior 的思想，因此用户可以继承的 Actor 类型比较少，而是通过 `Behaviors` 工厂类创建不同种类的Actor。下表是 Actor 类型的变更：
+
+
+| 经典 Actor | Typed |
+| ------ | ------ |
+| 继承 `AbstractActor` <br> 实例化创建 | 继承 `AbstractBehavior<T>` <br> 通过 `Behaviors.setup()` 创建 |
+| 继承 `AbstractActorWithStash` <br> 实例化创建 | 继承 `AbstractBehavior<T>` <br> 通过 `Behaviors.withStash()` 创建 |
+| 继承 `AbstractActorWithTimers` <br> 实例化创建 | 继承 `AbstractBehavior<T>` <br> 通过 `Behaviors.withTimers()` 创建 |
+| 继承 `AbstractPersistentActor` <br> 实例化创建 | 继承 `EventSourcedBehavior<Command,Event,State>` <br> 通过 `Behaviors.setup()` 创建 |
+| Stash 和 Timers 类型的 Actor 同上，以继承不同类创建 | Stash 和 Timers 类型的 Actor 同上，以 Behaviors 工厂的不同方法创建 |
 
 
