@@ -36,4 +36,4 @@
 
 下面的测试用例中演示了如何创建ActorSystem
 
-### [ActorSystemTest](src/test/java/com/iquantex/phoenix/typedactor/guide/system/ActorSystemTest.java)
+[**ActorSystemTest.java**](/src/test/java/com/iquantex/phoenix/typedactor/guide/system/ActorSystemTest.java)

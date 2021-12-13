@@ -2,7 +2,7 @@
 
 ## 1. 回复机制
 
-在 [Actor 和 Behavior](/doc/1-diff.md#sender-/-发件人) 中提到 `ActorContext<T>` 不再维护发件人信息，而是需要在消息中明确定义回复的 `ActorRef<T>`, 因此，在 Typed 中的回复机制有一些变化。
+在 [Actor和Behavior](/doc/1-actor-behavior.md#3-sender--parent) 中提到 `ActorContext<T>` 不再维护发件人信息，而是需要在消息中明确定义回复的 `ActorRef<T>`, 因此，在 Typed 中的回复机制有一些变化。
 
 | 经典 Actor | Typed |
 | ------ | ------ |
@@ -207,7 +207,7 @@ getContext()
 在 [Actor和Behavior](/doc/1-actor-behavior.md) 中，简单介绍了 Behavior 的 API，加上本文上述内容。有如下测试用例帮助理解 Typed Actor 的交互模式。
 
 - **演示 Behavior 如何处理消息的测试用例：**[DavidBehaviorTest](/src/test/java/com/iquantex/phoenix/typedactor/guide/actor/DavidBehaviorTest.java)
-- **演示 Ask 通信的测试用例：** [ActorAskTest](//src/test/java/com/iquantex/phoenix/typedactor/guide/actor/ActorAskTest.java)
+- **演示 Ask 通信的测试用例：** [ActorAskTest](/src/test/java/com/iquantex/phoenix/typedactor/guide/actor/ActorAskTest.java)
 
 
 # 二. 消息适配器

@@ -193,7 +193,7 @@ class AddBook implements Message {
 
 下面的类是新版 Actor 的示例定义：
 
-[**DavidBehavior.java**](src/main/java/com/iquantex/phoenix/typedactor/guide/actor/DavidBehavior.java)
+[**DavidBehavior.java**](/src/main/java/com/iquantex/phoenix/typedactor/guide/actor/DavidBehavior.java)
 
 
 # 四. Actor 类型变更
