@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 持久化数据库为 h2 -> 在 reference-persistence.conf 中配置.
  */
 @Slf4j
-class BookBehaviorTest {
+public class BookBehaviorTest {
 
     private static Book add;
     private static Book update;

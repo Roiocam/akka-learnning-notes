@@ -155,7 +155,7 @@ akka {
 | 定义事件处理| `receiveRecover` | `eventHandler` |
 | 持久化顺序| `persist(event){ callback } ` <br> 持久化之后回调 | - `Effect.persist(event)` <br> - `eventHandler` <br> - `Effect.andThen()` 副作用 |
 | Replaying/ 重播/ 事件溯源 | 接收 `RecoveryCompleted.class`  | 接收 `RecoveryCompleted` 信号 |
-｜ 强制回复的EventSoured | 无 ｜继承`EventSourcedBehaviorWithEnforcedReplies<Command,Event,State>` ｜
+| 强制回复的EventSoured | 无  | 继承`EventSourcedBehaviorWithEnforcedReplies<Command,Event,State>` |
 
 # 三. Akka 持久化内部保证及其他功能
 
