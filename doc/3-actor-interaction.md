@@ -309,6 +309,74 @@ public class Translator extends AbstractBehavior<Command> {
 
 ## 2. 测试用例
 
+下面是基于示例代码的 Adapter Response 测试用例。
 
+- 包含接收翻译任务并处理的BackendActor，及其相关消息协议定义的 [Backend.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/adapter/Backend.java)
+- 包含接收翻译请求的Translator Actor，及其相关消息协议定义的 [Frontend.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/adapter/Frontend.java)
+- 包含使用上面两者的测试用例。[AdapterTest.java](/src/test/java/com/iquantex/phoenix/typedactor/guide/adapter/AdapterTest.java)
 
 # 三. Actor 发现
+
+## 1. 经典 Actor
+
+每个 Actor 都有一个唯一的逻辑路径，它是通过从子 Actor -> 父 Actor 直到到达 ActorSystem 的 Root 之间的链路获得，并且它有一个物理路径。系统使用这些路径来查找参与者。例如，当 system 接收到远程消息并搜索接收者时
+
+在经典 Actor 中，Actor 还可以使用这些绝对路径或者相对路径来查找其他 Actor，并且得到一个 `ActorSelection` 结果.
+
+<details>
+<summary>示例代码</summary>
+
+```java
+// 通过绝对路径查找
+getContext().actorSelection("/user/serviceA/actor");
+// 会查找当前 Actor 的兄弟姐妹（相对路径）
+getContext().actorSelection("../joe");
+```
+
+</details>
+
+上述的代码中，`ActorContext` 继承了 `ActorRefFactory`, 而 `ActorRefFactory` 的 `actorSelection` 维护了 `ActorSelection` 的创建。
+
+## 2. Typed
+
+在 Typed 中，`ActorContext<T>` 不再继承 `ActorRefFactory`, 也没有 `ActorSelection`, 有关 `ActorRef` 的查找，即 Actor 发现通过 `Receptionist` 维护。
+
+在 Typed 中，获取 `ActorRef` 的方式有两种：
+
+- 创建 Actor 时获取
+- 通过 Receptionist 发现
+
+### Receptionist
+
+当一个 Actor 需要被其他 Actor 发现，但是无法在传入消息中放置它的引用时。可以使用 `Receptionist` 进行发现，**Receptionist 同时支持本地和集群**。在集群场景下，每个节点的注册表被自动分发到集群内的其他节点，注册表是动态更新的。
+
+使用 `Receptionist` 查找时之前需要将 Actor 手动注册到 Receptionist。
+
+<details>
+
+<summary>示例代码</summary>
+
+```java
+ServiceKey<Ping> pingServiceKey = ServiceKey.create(Ping.class, "pingService");
+// 获取 ActorSystem 的 Receptionist，并发送注册消息
+context.getSystem().receptionist()
+              .tell(Receptionist.register(pingServiceKey, context.getSelf()));
+```
+
+</details>
+
+更多 Receptionist 的使用内容可以参考 Akka 官方文档：[Akka-Discovery](https://doc.akka.io/docs/akka/current/typed/actor-discovery.html)
+
+## 3. API 对比
+
+| 查找方式 | 经典 Actor | Typed |
+| ------ | ------ | ------ |
+| 查找具体的ActorRef | 通过路径创建`ActorSelection`| 将 Actor 注册到 `Receptionist` 并通过其查找 |
+| 将消息发到非具体的ActorRef，而是目的地路径 | 通过相对根路径创建`ActorSelection` | 需要使用 `Group Router`,详细内容参考 [Akka文档](https://doc.akka.io/docs/akka/current/typed/routers.html#group-router) |
+
+## 4. 测试用例
+
+下面的测试用例中，演示了使用了 Receptionist 获取具体的 ActorRef 的案例，以及使用 `ActorContext<T>` 获取自身的子 ActorRef
+
+#### [GetActorRefTest.java](/src/test/java/com/iquantex/phoenix/typedactor/guide/actor/GetActorRefTest.java)
+
