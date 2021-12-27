@@ -138,7 +138,6 @@
             <artifactId>akka-persistence-testkit_${scala.version}</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

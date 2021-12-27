@@ -3,7 +3,7 @@
 # 前言
 -->
 
-# 目录
+# 一. Typed 目录
 
 ### 1. [Actor 和 Behavior](/doc/1-actor-behavior.md)
 - (1). 定义
@@ -26,3 +26,15 @@
 - (1). 集群
 - (2). 集群分片
 - (3). 集群单例
+
+# 二. Akka 消息交付可靠性
+
+### 1.[Akka 消息投递可靠性](/doc/delivery/1-message-delivery-reliability.md)
+
+### 2.[经典 Actor 可靠交付](/doc/delivery/2-classic-reliable-delivery.md)
+
+### 3.[Typed 可靠交付 (一): 点对点模式](/doc/delivery/3-typed-reliable-delivery-p2p.md)
+
+### 3.[Typed 可靠交付 (二): 拉取模式](/doc/delivery/3-typed-reliable-delivery-pull.md)
+
+### 3.[Typed 可靠交付 (三): 分片模式](/doc/delivery/3-typed-reliable-delivery-sharding.md)
