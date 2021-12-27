@@ -1,6 +1,7 @@
 package com.iquantex.phoenix.typedactor.guide.reliability.protocol;
 
 import com.iquantex.phoenix.typedactor.guide.protocol.CborSerializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,6 @@ public interface OrderEvent extends CborSerializable {
     class OrderCreated implements OrderEvent {
 
         private String id;
-
     }
 
     @AllArgsConstructor
@@ -23,6 +23,5 @@ public interface OrderEvent extends CborSerializable {
 
         private String id;
         private Long deliverId;
-
     }
 }

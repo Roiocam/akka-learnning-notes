@@ -1,12 +1,11 @@
 package com.iquantex.phoenix.typedactor.guide.reliability.protocol;
 
 import com.iquantex.phoenix.typedactor.guide.protocol.CborSerializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * @author AndyChen
- */
+/** @author AndyChen */
 public interface PaymentMessage extends CborSerializable {
 
     @AllArgsConstructor
@@ -15,7 +14,6 @@ public interface PaymentMessage extends CborSerializable {
 
         private String id;
         private Long deliverId;
-
     }
 
     @AllArgsConstructor
@@ -24,6 +22,5 @@ public interface PaymentMessage extends CborSerializable {
 
         private Long deliverId;
         private String id;
-
     }
 }

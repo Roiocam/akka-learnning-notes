@@ -10,7 +10,7 @@
 
 下面将以如下的 Actor 结构. 演示 Akka 的最少一次交付
 
-![经典交付](/doc/img/classic_delivery.png)
+![经典交付](/img/classic_delivery.png)
 
 
 ## 1. API

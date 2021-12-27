@@ -1,31 +1,31 @@
 package com.iquantex.phoenix.typedactor.guide.reliability.classic;
 
-import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import com.google.common.collect.Maps;
 import com.iquantex.phoenix.typedactor.guide.reliability.protocol.OrderMessage.ConfirmOrder;
 import com.iquantex.phoenix.typedactor.guide.reliability.protocol.PaymentMessage.PaySuccess;
 import com.iquantex.phoenix.typedactor.guide.reliability.protocol.PaymentMessage.RequestPay;
 import com.iquantex.phoenix.typedactor.guide.reliability.service.PaymentService;
-import java.util.Map;
+
+import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
+import akka.actor.Props;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
 
 /**
  * 支付 Actor
  *
- * <p>1. 接收 {@link OrderActor} 发起的{@link RequestPay} 消息, 向 {@link PaymentService} 发起支付任务</p>
- * <p>2. 接收 {@link PaymentService} 支付任务的成功结果, 并向缓存的 {@link OrderActor} 回复支付成功的确认</p>
+ * <p>1. 接收 {@link OrderActor} 发起的{@link RequestPay} 消息, 向 {@link PaymentService} 发起支付任务
+ *
+ * <p>2. 接收 {@link PaymentService} 支付任务的成功结果, 并向缓存的 {@link OrderActor} 回复支付成功的确认
  *
  * @author AndyChen
  */
 @Slf4j
 public class PaymentActor extends AbstractActor {
 
-
-    /**
-     * 缓存支付中订单
-     */
+    /** 缓存支付中订单 */
     private Map<String, ActorRef> cacheSender = Maps.newHashMap();
 
     public static Props create() {
@@ -35,9 +35,9 @@ public class PaymentActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-            .match(RequestPay.class, this::handlePaymentRequest)
-            .match(PaySuccess.class, this::handlePayConfirm)
-            .build();
+                .match(RequestPay.class, this::handlePaymentRequest)
+                .match(PaySuccess.class, this::handlePayConfirm)
+                .build();
     }
 
     /**
@@ -47,8 +47,9 @@ public class PaymentActor extends AbstractActor {
      */
     private void handlePayConfirm(PaySuccess msg) {
         log.info("支付成功,{},{}", msg.getId(), msg.getDeliverId());
-        cacheSender.remove(msg.getId())
-            .tell(new ConfirmOrder(msg.getId(), msg.getDeliverId()), getSelf());
+        cacheSender
+                .remove(msg.getId())
+                .tell(new ConfirmOrder(msg.getId(), msg.getDeliverId()), getSelf());
     }
 
     /**

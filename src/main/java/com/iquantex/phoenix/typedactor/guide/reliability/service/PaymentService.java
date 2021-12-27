@@ -1,13 +1,13 @@
 package com.iquantex.phoenix.typedactor.guide.reliability.service;
 
-import akka.actor.ActorRef;
 import com.iquantex.phoenix.typedactor.guide.reliability.protocol.PaymentMessage.PaySuccess;
+
+import akka.actor.ActorRef;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * @author AndyChen
- */
+/** @author AndyChen */
 public class PaymentService {
 
     private static Timer timer = new Timer();
@@ -24,13 +24,13 @@ public class PaymentService {
      * @param payActor
      */
     public static void createPayTask(Long deliverId, String id, ActorRef payActor) {
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                payActor.tell(new PaySuccess(deliverId, id), ActorRef.noSender());
-            }
-        };
+        TimerTask task =
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        payActor.tell(new PaySuccess(deliverId, id), ActorRef.noSender());
+                    }
+                };
         timer.schedule(task, delayTime);
     }
-
 }
