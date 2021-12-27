@@ -109,14 +109,16 @@ Actor 时都创建一个新的 ActorContext 而不应该复用。*所以应该�
 | context 中创建子actor | ActorContext.actorOf() | ActorContext<T>.spawn() |
 | system 中创建用户顶级actor | ActorSystem.actorOf() | 没有 spawn() 方法创建顶级用户 Actor,而是创建 system 时传入一个顶级 Actor |
 
-两者实例化 Actor 的方法传入的参数也不一样。
+### 2. Props 和 Behaviors
+
+在上述创建一个 Actor 的 API 中，两者传入的参数也太不一样，即 Actor 工厂方法的定义不太一样。在经典 Actor 中，`Props.create` 常用于创建一个 Actor
 
 - 经典 Actor：actorOf 接收 `akka.actor.Props` 参数，类似于 actor 实例工厂，用于创建和重启，在 Props 中也可以为 actor 指定调度器 dispatcher
 - Typed：spawn 直接接收 Behavior<T> 而不是 Props 工厂。工厂方面由 `Behaviors.setup()` 定义。spawn也可以接收一个 Props 参数，例如指定调度器。
 
 在 actorOf 中，`name` 参数是可选的；在 spawn 中 name 参数是强制的。如果想要创建没有 name 属性的 actor 其替代方法为 `spawnAnonymous()`
 
-### 2. become / 改变行为
+### 3. become / 改变行为
 
 经典 Actor 中，`ActorContext.become()` 提供了改变处理 Receive 消息处理的行为。通过 `ActorContext.unbecome` 能够恢复上一个行为。
 
@@ -142,7 +144,7 @@ public Receive<Message> createReceive() {
 ```
 </details>
 
-### 3. sender / parent
+### 4. sender / parent
 
 #### sender / 发件人
 
@@ -173,7 +175,7 @@ class AddBook implements Message {
 | AbstractActor/AbstractBehavior | getParent(), 实际是从 ActorContext 中获取 | 无，需要在构造函数中作为参数传入 `ActorRef<T>` |
 | ActorContext | getContext().getParent() | 同上，`ActorContext<T>` 不再维护 sender 成员 |
 
-### 4. 生命周期 
+### 5. 生命周期 
 
 | 经典 Actor | Typed |
 | ------ | ------ |
@@ -183,7 +185,7 @@ class AddBook implements Message {
 
 ![生命周期信号](/img/typed_life_signal.png)
 
-### 5. Supervisor 
+### 6. Supervisor 
 
 **经典 Actor**
 
@@ -235,11 +237,11 @@ public static Behavior<Message> create() {
 
 </details>
 
-### 6. watch
+### 7. watch
 
 `ActorContext.watch` 和 `Terminated` 在 Typed 中几乎与经典 Actor 相同。唯一的区别是在 Typed 中 `Terminated` 属于 Signal 而不是 Message
 
-### 7. stop
+### 8. stop
 
 | 停止方式 | 经典 Actor | Typed |
 | ------ | ------ | ------ |
@@ -247,7 +249,7 @@ public static Behavior<Message> create() {
 | 停止自身 | `ActorSystem.stop` <br> `ActorContext.stop` | `Behaviors.stopped()` |
 | 消息停止自身 | `PoisonPill 消息` | 不支持 |
 
-### 8. 示例代码
+### 9. 示例代码
 
 下面的类是新版 Actor 的示例定义：
 
@@ -269,7 +271,7 @@ public static Behavior<Message> create() {
 | 继承 `AbstractActorWithStash` <br> 实例化创建 | 继承 `AbstractBehavior<T>` <br> 通过 `Behaviors.withStash()` 创建 |
 | 继承 `AbstractActorWithTimers` <br> 实例化创建 | 继承 `AbstractBehavior<T>` <br> 通过 `Behaviors.withTimers()` 创建 |
 | 继承 `AbstractPersistentActor` <br> 实例化创建 | 继承 `EventSourcedBehavior<Command,Event,State>` <br> 通过 `Behaviors.setup()` 创建 |
-| Stash 和 Timers 类型的 Actor 同上，以继承不同类创建 | Stash 和 Timers 类型的 Actor 同上，以 Behaviors 工厂的不同方法创建 |
+| Stash 和 Timers 类型的 `AbstractPersistentActor` 同上，以继承不同类创建 | Stash 和 Timers 类型的 `EventSourcedBehavior` 同上，以 Behaviors 工厂的不同方法创建 |
 
 # 五. 测试用例
 
