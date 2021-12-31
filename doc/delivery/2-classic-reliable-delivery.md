@@ -39,4 +39,4 @@ Actor 的实现如下：
 
 - [订单Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/classic/OrderActor.java)
 - [支付Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/classic/PaymentActor.java)
-- [消息协议,订单状态](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/protocol)
+- [消息协议,订单状态](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/protocol/)

@@ -1,10 +1,10 @@
 # Typed 可靠交付 (一): 点对点模式
 
-在经典 Actor 使用了推送方式的至少一次交付，但是 Akka 开发者认为推送的方式并不友好，因而在 Typed 中使用的是工作拉取的方式实现至少一次交付。
+在经典 Actor 使用了推送方式的至少一次交付，但是 Akka 开发者认为推送的方式并不友好，因而在 Typed 中使用的是工作拉取的方式实现可靠交付。
 
 ## 1. 特性
 
-点对点模式的至少一次交付有以下特点：
+点对点模式的可靠交付有以下特点：
 
 1. 使用工作拉取的方式，支持流量控制
 2. 支持非持久化 Actor 使用。(`但是当生产者崩溃时，消息可能丢失`)
@@ -15,7 +15,15 @@
 
 ![typed-p2p.png](/img/typed-p2p.png)
 
-## 3. API 
+## 3. 交付语义
+
+点对点模式的交付语义不是单纯的至少一次交付语义：
+
+1. 当生产者和消费者都没有崩溃时，此时的交付语义是**`Effectively-Once`**, 即精确一次：消息不会丢失也不会重复。
+2. 当生产者崩溃时，此时交付语义是**`至少一次`**：未确认的消息可能会被重复投递，而且需要在生产者中对消息列表持久化。
+3. 当消费者崩溃时，此时交付语义是**`至少一次`**：未确认的消息会被投递给新的消费者，但是前一个消费者已经消费该消息。
+
+## 4. API 
 
 在 Typed 中，点对点的可靠交付由两个控制器 Actor 完成，在用户的使用层面上也更加"消息"式风格。
 
@@ -40,7 +48,9 @@ consumerController.tell(new ConsumerController.Start<>(consumerActorRef));
 
 ```
 
-## 4. 案例
+    Controller 和实际的 Actor 必须在同一 JVM 中。
+
+## 5. 案例
 
 还是以订单和支付的案例来实现，不过其流程稍微有些不同。
 
@@ -60,4 +70,4 @@ Actor 的实现如下：
 
 - [订单Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/p2p/OrderActor.java)
 - [支付Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/p2p/PaymentActor.java)
-- [消息协议,订单状态](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/protocol)
+- [消息协议,订单状态](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/protocol/)
