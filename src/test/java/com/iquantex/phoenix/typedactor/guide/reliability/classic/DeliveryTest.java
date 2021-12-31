@@ -1,7 +1,6 @@
 package com.iquantex.phoenix.typedactor.guide.reliability.classic;
 
 import com.iquantex.phoenix.typedactor.guide.reliability.protocol.OrderMessage.CreateOrder;
-import com.iquantex.phoenix.typedactor.guide.reliability.service.PaymentService;
 
 import com.typesafe.config.ConfigFactory;
 import akka.actor.ActorPath;
@@ -45,15 +44,7 @@ class DeliveryTest {
     }
 
     @Test
-    public void twice_delivery_case() throws InterruptedException {
-        PaymentService.updateDelayTime(150L);
-        orderActor.tell(new CreateOrder(UUID.randomUUID().toString()), ActorRef.noSender());
-        Thread.sleep(1000);
-    }
-
-    @Test
-    public void unconfirmed_warning_case() throws InterruptedException {
-        PaymentService.updateDelayTime(500L);
+    public void delivery_case() throws InterruptedException {
         orderActor.tell(new CreateOrder(UUID.randomUUID().toString()), ActorRef.noSender());
         Thread.sleep(1000);
     }

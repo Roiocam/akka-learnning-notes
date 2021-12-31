@@ -17,9 +17,6 @@ import akka.persistence.AtLeastOnceDelivery.UnconfirmedWarning;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 处理订单的 Actor,
  *
@@ -35,11 +32,11 @@ import java.util.Map;
 public class OrderActor extends AbstractPersistentActorWithAtLeastOnceDelivery {
 
     private final ActorSelection destination;
-    private final Map<String, OrderState> orderMap;
+    private OrderState state;
 
     public OrderActor(ActorSelection destination) {
         this.destination = destination;
-        this.orderMap = new HashMap<>();
+        this.state = new OrderState(null, null);
     }
 
     public static Props create(ActorSelection paymentActorSelection) {
@@ -95,9 +92,7 @@ public class OrderActor extends AbstractPersistentActorWithAtLeastOnceDelivery {
     public void updateState(OrderEvent evt) {
         if (evt instanceof OrderCreated) {
             OrderCreated created = (OrderCreated) evt;
-            // 幂等处理
-            orderMap.putIfAbsent(
-                    created.getId(), new OrderState(created.getId(), OrderStatus.Create));
+            state = new OrderState(created.getId(), OrderStatus.Create);
             log.info("订单已创建,投递支付请求 {}", created.getId());
             // 可靠投递，如果没有接到 OrderConfirmed，则默认每 5s 继续投递一次
             deliver(destination, deliverId -> new RequestPay(created.getId(), deliverId));
@@ -106,9 +101,7 @@ public class OrderActor extends AbstractPersistentActorWithAtLeastOnceDelivery {
             log.info("查看交付快照,{}", JSON.toJSONString(getDeliverySnapshot()));
             log.info("订单确认");
             OrderConfirmed confirmed = (OrderConfirmed) evt;
-            OrderState orderState = orderMap.get(confirmed.getId());
-            orderState.setOrderStatus(OrderStatus.Confirm);
-            orderMap.replace(orderState.getOrderId(), orderState);
+            state.setOrderStatus(OrderStatus.Confirm);
             // 确认投递成功
             confirmDelivery(confirmed.getDeliverId());
         }

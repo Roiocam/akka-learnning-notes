@@ -29,7 +29,7 @@
 
 # 二. Akka 消息交付可靠性
 
-### 1.[Akka 消息投递可靠性](/doc/delivery/1-message-delivery-reliability.md)
+### 1.[Akka 消息投递一般原则](/doc/delivery/1-message-delivery-reliability.md)
 
 ### 2.[经典 Actor 可靠交付](/doc/delivery/2-classic-reliable-delivery.md)
 
