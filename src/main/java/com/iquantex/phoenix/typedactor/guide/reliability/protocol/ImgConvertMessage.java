@@ -1,9 +1,10 @@
 package com.iquantex.phoenix.typedactor.guide.reliability.protocol;
 
 import akka.actor.typed.delivery.ConsumerController;
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.io.Serializable;
 
 public interface ImgConvertMessage extends Serializable {
 

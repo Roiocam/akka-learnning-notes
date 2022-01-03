@@ -2,19 +2,18 @@ package com.iquantex.phoenix.typedactor.guide.reliability.protocol;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.delivery.WorkPullingProducerController;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * @author AndyChen
- */
+import java.util.Optional;
+import java.util.UUID;
+
+/** @author AndyChen */
 public interface ImgWorkMessage {
 
     @AllArgsConstructor
     @Getter
-     class Covert implements ImgWorkMessage {
+    class Covert implements ImgWorkMessage {
 
         private final String fromFormat;
         private final String toFormat;

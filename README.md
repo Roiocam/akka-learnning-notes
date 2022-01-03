@@ -39,15 +39,18 @@
 - (1). API
 - (2). 特性,注意事项
 - (3). 案例
-### 3.[Typed 可靠交付 (一): 点对点模式](/doc/delivery/3-typed-reliable-delivery-p2p.md)
+### 3.[Typed 可靠交付通用原则](/doc/delivery/3-typed-reliable-delivery.md)
+- (1). 特性
+- (2). 交付语义
+- (3). 时序图
+### 4.[Typed 可靠交付 (一): 点对点模式](/doc/delivery/4-typed-reliable-delivery-p2p.md)
 - (1). 特性 
-- (2). 时序图
-- (3). 交付语义
-- (4). API
-- (5). 案例
-### 4.[Typed 可靠交付 (二): 工作拉取模式](/doc/delivery/4-typed-reliable-delivery-pull.md)
+- (2). 交付语义
+- (3). API
+- (4). 案例
+### 5.[Typed 可靠交付 (二): 工作拉取模式](/doc/delivery/5-typed-reliable-delivery-pull.md)
 - (1). 特性
 - (2). 交付语义
 - (3). API
 - (4). 案例
-### 5.[Typed 可靠交付 (三): 分片模式](/doc/delivery/5-typed-reliable-delivery-sharding.md)
+### 6.[Typed 可靠交付 (三): 分片模式](/doc/delivery/6-typed-reliable-delivery-sharding.md)
