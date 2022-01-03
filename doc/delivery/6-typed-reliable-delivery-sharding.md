@@ -49,10 +49,10 @@ producer = testKit.spawn(TodoService.create(producerController), "producer");
 3. 消费者只有回复确认之后，才会拉取下一条消息
 4. 同一份分片ID下的 Actor 消息有序
 
-**工作拉取可靠交付示例：:**[WorkPullTest.java](/src/test/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/WorkPullTest.java)
+**分片 Actor 可靠交付示例：:**[ShardingTest.java](/src/test/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/ShardingTest.java)
 
 Actor 的实现如下：
 
-- [消费者Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/workpull/ImageConverterActor.java)
-- [生产者Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/workpull/WorkManager.java)
+- [消费者Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/sharding/TodoListActor.java)
+- [生产者Actor.java](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/typed/sharding/TodoService.java)
 - [消息协议,订单状态](/src/main/java/com/iquantex/phoenix/typedactor/guide/reliability/protocol/)

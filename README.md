@@ -54,3 +54,7 @@
 - (3). API
 - (4). 案例
 ### 6.[Typed 可靠交付 (三): 分片模式](/doc/delivery/6-typed-reliable-delivery-sharding.md)
+- (1). 特性
+- (2). 交付语义
+- (3). API
+- (4). 案例
