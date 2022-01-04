@@ -43,6 +43,7 @@
 - (1). 特性
 - (2). 交付语义
 - (3). 时序图
+- (4). 案例
 ### 4.[Typed 可靠交付 (一): 点对点模式](/doc/delivery/4-typed-reliable-delivery-p2p.md)
 - (1). 特性 
 - (2). 交付语义
