@@ -1,6 +1,6 @@
 # Typed 可靠交付通用原则
 
-在经典 Actor 使用了推送方式的至少一次交付，但是 Akka 开发者认为推送的方式并不友好，因而在 Typed 中使用的是工作拉取的方式实现可靠交付。
+在经典 Actor 实现了推送方式的至少一次交付，但是 Akka 开发者认为推送的方式并不友好，因而在 Typed 中使用的是工作拉取的方式实现可靠交付。
 
 ## 1. 特性
 
@@ -24,3 +24,10 @@ Typed 的可靠交付中，有三种实现分别对应着不同的使用场景:
 
 ![typed-p2p.png](/img/typed-p2p.png)
 
+## 4. 案例
+
+可靠交付的作者在 Typed 中工作拉取式的可靠交付中，识别出可靠交付的场景主要有三种：
+
+- [**点对点模式**](/doc/delivery/4-typed-reliable-delivery-p2p.md)：即一对一，两个 Actor 之间的消息投递实现可靠性，一般是生产者消费者模型。
+- [**工作拉取模式**](/doc/delivery/5-typed-reliable-delivery-pull.md)：即一对多，多个消费者 Actor 同时向一个生产者请求投递消息。
+- [**分片模式**](/doc/delivery/6-typed-reliable-delivery-sharding.md)：即多对多，如一个生产者向分片中的多个消费者投递消息；多个生产者分别向固定的分片 Actor 发送消息。

@@ -2,6 +2,16 @@
 
 分片模式用于生产者 Actor 向集群分片的消费者之间发送消息的可靠交付。
 
+分片模式下可靠交付则比较灵活，借助于集群分片功能，Typed 可靠交付能实现两种场景。
+
+[sharding-consumer.png](/img/sharding-consumer.png)
+
+**一对多模式**: 一个生产者向任意的分片消费者投递消息。
+
+![sharing-either.png](/img/sharing-either.png)
+
+**多对多模式**: 多个生产者，每个生产者都能向任意的分片消费者投递消息。
+
 ## 1. 特性
 
 - 集群中的多个 ActorSystem 可以共享一个 ShardingProducerController, 后者可以发送给任意 EntityId 标识的 ShardingConsumerController
