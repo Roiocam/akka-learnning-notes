@@ -1,4 +1,4 @@
-package com.iquantex.phoenix.typedactor.guide.cluster;
+package com.iquantex.phoenix.typedactor.guide.persistence.cluster;
 
 import com.iquantex.phoenix.typedactor.guide.persistence.BookBehavior;
 import com.iquantex.phoenix.typedactor.guide.persistence.BookCommand;
