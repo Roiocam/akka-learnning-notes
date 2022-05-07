@@ -11,7 +11,7 @@
         <compiler.java.version>8</compiler.java.version>
         <scala.version>2.13</scala.version>
         <guice.version>4.1.0</guice.version>
-        <akka.version>2.6.17</akka.version>
+        <akka.version>2.6.19</akka.version>
         <lombok.version>1.18.22</lombok.version>
         <akka-http.version>10.2.7</akka-http.version>
         <fastjson.version>1.2.76</fastjson.version>
