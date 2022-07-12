@@ -249,7 +249,40 @@ public static Behavior<Message> create() {
 | 停止自身 | `ActorSystem.stop` <br> `ActorContext.stop` | `Behaviors.stopped()` |
 | 消息停止自身 | `PoisonPill 消息` | 不支持 |
 
-### 9. 示例代码
+
+#### 9. narrow
+
+在 Typed 中, 增加了 Actor 定义 `Behavior<T>`, 只有一个公共方法, 那就是 `narrow()`. 此方法的定义为收缩类型. 其意义为何呢, 以下面的两个代码为例.
+
+```java
+
+import akka.actor.typed.Behavior;
+import akka.actor.typed.javadsl.Behaviors;
+
+public class ActorFactory {
+    public static Behavior<Command> createReadWriteBehavior() {
+        return Behaviors.receive(Command.class)
+                .onMessage(GetCommand.class,c-> read())
+                .onMessage(UpdateCommand.class,c-> write())
+                .build();
+    }
+
+    /**
+     * 根据 narrow 收缩可接收的消息类型, 让内部实现仍是 Read-Write, 但是对用户而言类型约束了只能发送 GetCommand.
+     * @return
+     */
+    public static Behavior<GetCommand> createReadOnlyBehavior(){
+        return createReadWriteBehavior().narrow();
+    }
+}
+
+public interface Command {}
+public class GetCommand implements Command {}
+public class UpdateCommand implements Command {}
+
+```
+
+### 10. 示例代码
 
 下面的类是新版 Actor 的示例定义：
 
