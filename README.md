@@ -59,3 +59,9 @@
 - (2). 交付语义
 - (3). API
 - (4). 案例
+
+# 三. 持久化 Actor 性能调优
+
+- 1. [整体架构](/doc/persist/1-architecture.md)
+- 2. [性能优化参数](/doc/persist/2-performance-tips.md)
+- 3. [监控指南](/doc/persist/3-monitor.md)
