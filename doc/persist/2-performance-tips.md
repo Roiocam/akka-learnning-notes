@@ -1,4 +1,16 @@
-# 识别到的性能优化参数
+# 性能优化指南
+
+Akka Persistence 模块本身的性能足够好，因此数据库的写入都是异步的，可以及时释放掉 CPU 的资源给其他 Actor.
+
+但是在使用过程中常常遇到一些 StashOverflow、CircuitBreaker 的错误, 这些错误通常都是不正确使用的结果.
+
+本文从三个方面的介绍提供性能优化的思路：
+
+- 相关的性能参数有哪些
+- 一些错误的原因
+- Tips
+
+## 1. 识别到的性能优化参数
 
 - 当 Actor 读取快照失败时，可以选择从事件中溯源状态
     - 参数：`akka.persistence.snapshot-store-plugin-fallback.snapshot-is-optional` 默认是 false
@@ -31,7 +43,7 @@ akka.persistence {
 
 ```
 
-## 一些错误的原因
+## 2. 一些错误的原因
 
 ### 数据库瓶颈
 
@@ -52,3 +64,10 @@ akka.persistence {
 
 - 事件溯源恢复阶段耗时太久：此时不断有流量进入，会导致丢弃掉 capacity 之后的消息。这种情况应该在Actor溯源前 Stash 住，让流量只在溯源之后进来
 - 事件持久化耗时太久：当数据库有显著瓶颈，或者 Actor 本身流量过高时，在持久化的过程中瞬间击垮 Stash。这种情况应该让 Actor 在做持久化的时候将消息 Stash 住
+
+
+## 3. Tips
+
+从上述的描述以及整个架构不难看出，StashOverflow 并非整体系统的负载能力不够，而是没有相应的背压机制。
+
+本文不讨论背压的实现，而是在流量的入口处攒批，从降低流量的角度解决 StashOverflow 的问题。
