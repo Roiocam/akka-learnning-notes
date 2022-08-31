@@ -58,9 +58,9 @@ Akka 自身也类似于基于上述的方式实现 `Lightbend Telemetry`, 但可
 
 阅读 Akka 源代码中一个持久化 Actor 请求溯源许可的代码. 可以发现有一段没有任何行为的模版方法.
 
-![monitor_1](/img.monitor_1.png)
+![img.png](/img/monitor_1.png)
 
-![monitor_2](/img.monitor_2.png)
+![img.png](/img/monitor_2.png)
 
 这里的代码也就是 Akka 指标埋点的代码, 因此可以只增强这个方法, 注入一些指标埋点的逻辑.
 
