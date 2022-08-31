@@ -27,6 +27,10 @@
 - (2). 集群分片
 - (3). 集群单例
 
+### 6. [正确编写 Actor](/doc/6-how-to-write-an-actor.md)
+- (1). 定义
+- (2). 指南
+
 # 二. Akka 消息交付可靠性
 
 ### 1.[Akka 消息投递一般原则](/doc/delivery/1-message-delivery-reliability.md)
