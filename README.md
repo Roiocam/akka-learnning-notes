@@ -70,3 +70,10 @@
 ### 2. [性能优化指南](/doc/persist/2-performance-tips.md)
 ### 3. [监控指南](/doc/persist/3-monitor.md)
 
+
+
+
+
+# 附录1：可观测性
+
+### 1. [OpenTelemetry Agent Extension 编写](/doc/observability/1-opentelemetry-guide.md)
