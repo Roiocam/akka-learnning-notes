@@ -77,3 +77,4 @@
 # 附录1：可观测性
 
 ### 1. [OpenTelemetry Agent Extension 编写](/doc/observability/1-opentelemetry-guide.md)
+### 2. [Akka Dispatcher 监控指标实现](/doc/observability/2-akka-dispatcher-instrument.md)
