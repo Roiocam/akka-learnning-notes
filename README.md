@@ -78,3 +78,4 @@
 
 ### 1. [OpenTelemetry Agent Extension 编写](/doc/observability/1-opentelemetry-guide.md)
 ### 2. [Akka Dispatcher 监控指标实现](/doc/observability/2-akka-dispatcher-instrument.md)
+### 3. [Akka Message 处理、On Queue 时延埋点](/doc/observability/3-actor-message-duration.md)
