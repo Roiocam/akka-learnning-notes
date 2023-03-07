@@ -1,4 +1,4 @@
-# 1. 思路
+# 1. 介绍
 
 在上个文章里面，使用了 OpenTelemetry 成功拿到了 Dispatcher 背后的线程池，使我们能够在运行时通过外部监控采集时，触发
 
@@ -19,7 +19,7 @@
 
 对于链路追踪这些，请参考 OpenTelemetry 的 Instrumenter。
 
-# 2. 实现
+# 2. 思路
 
 
 ## 2.1 On Queue Time 指标采集
@@ -30,6 +30,10 @@ Actor 作为运行时。因此 Akka Mailbox 的 Queue Time 就是 Java Queue 的
 
 思路也比较简单：在 Queue 的 `enqueue()` 调用之前改变 Message，附加 Start Time，Attribute 等属性，在 `dequeue()` 时记录指标并还原 Message。
 
+而 Akka 的优先级 Mailbox 的实现思路也是这种方式：
+
+![priority_mailbox](/img/priority_mailbox.png)
+
 ## 2.2 Processing Time 指标采集
 
 上面我们提到 Mailbox 实现了 Runnable 和 ForkJoinTask 接口，前者是 `ThreadPoolExecutor` 内 Task 的定义，后者是 `ForkJoinPool` 中
@@ -37,3 +41,21 @@ Actor 作为运行时。因此 Akka Mailbox 的 Queue Time 就是 Java Queue 的
 Task 的定义，而 Akka 的 ForkJoinTask 的 `exec()` 方法最终调用了 `run()` 使 Mailbox 同时兼容两类线程池。
 
 因此 Processing 采集的思路也很简单：记录 `run()` 的执行时间。
+
+原本一开始看了 ThreadPoolExecutor 的源码，其执行任务的 `run()` 留有两个模版方法: `beforeExecute()` 和 `afterExecute()`, 在这里实现监控埋点是个不错的方案.
+
+但实际执行时有两个问题：
+
+- ForkJoinPool 没有这个模版方案
+- 跨方法的 Advice, OpenTelemetry 上下文的传递比较麻烦.
+
+因此直接对 `run()` 方法切面就可以了.
+
+
+# 3. 实现
+
+## 3.1 Queue Time
+
+
+## 3.2 Processing Time
+
