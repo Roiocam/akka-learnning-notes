@@ -59,3 +59,24 @@ Task 的定义，而 Akka 的 ForkJoinTask 的 `exec()` 方法最终调用了 `r
 
 ## 3.2 Processing Time
 
+
+# 4. Priority Mailbox
+
+为什么要增加这个 Topic，主要是应用有这个需求，以场景为例：
+
+> 用户开发的应用需要支持消息的优先级处理. 在同一优先级下仍然按 FIFO 顺序。（例如 akka 内部里，Poison 内部消息一半是放在最后处理的，让消息处理完之后再停止：Graceful Shutdown）
+> 
+> 这个场景下，低优先级消息的 Queue Time 和高优先级的 Queue Time 不能同日而语，而直接使用平均值更无法体现每个消息的均值。
+> 
+> 例如：高优先级平均 1ms, 低优先级消息平均 100ms, 两者的平均值是 50ms, 对用户而言, 无法观测到高优先级在内部的延迟（1ms），而错估了应用性能
+> 
+> 当然，这个问题可以通过链路追踪解决，但这不是这个话题内应该提及的。
+
+## 4.1 思路
+
+有了 Queue Time 的基础，以及 Akka 内部中 Priority Mailbox 的处理方式，那么 Priority Mailbox 中 Priority 的获取也是简单明了的：**通过在 WrapperMessage 中增加属性即可**
+
+实际实现的时候也遇到了一个问题，那就是 Akka Typed 里面，Actor 的 Dispatcher 指定的问题，最终通过排查 Akka 的代码，定位到了一个可以说是 Akka 配置加载上的 BUG，详细的上下文请看此 ISSUE：https://github.com/akka/akka/issues/31862
+
+## 4.2 实现
+
